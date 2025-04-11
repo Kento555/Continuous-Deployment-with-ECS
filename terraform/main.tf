@@ -1,14 +1,13 @@
-
-module "iam_task_role" {
-  source = "./modules/iam"
-  env    = var.env
+resource "aws_ecr_repository" "ecr" {
+  name         = "${var.env}-ecr"
+  force_delete = true
 }
 
 module "ecs" {
   source  = "terraform-aws-modules/ecs/aws"
   version = "~> 5.9.0"
 
-  cluster_name = "${var.env}-ecs"
+  cluster_name = "${local.prefix}-${var.env}-ecs"
 
   fargate_capacity_providers = {
     FARGATE = {
@@ -22,12 +21,12 @@ module "ecs" {
     flask-service = {
       cpu    = 512
       memory = 1024
-      task_role_arn = module.iam_task_role.task_role_arn
+      task_role_arn = module.iam_task_role.task_role_arn 
 
       container_definitions = {
         flask-container = {
           essential = true
-          image     = "${var.account_id}.dkr.ecr.${var.region}.amazonaws.com/${var.env}-ecr:latest"
+          image     = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${data.aws_region.current.name}.amazonaws.com/${local.prefix}-ecr:${var.env}"
           port_mappings = [{
             containerPort = 8080
             protocol      = "tcp"
@@ -35,9 +34,14 @@ module "ecs" {
         }
       }
 
-      assign_public_ip     = true
-      subnet_ids           = var.public_subnet_ids
-      security_group_ids   = var.security_group_ids
+      assign_public_ip = true
+      subnet_ids       = var.public_subnet_ids
+      security_group_ids = var.security_group_ids
     }
   }
+}
+
+module "iam_task_role" {
+  source = "./modules/iam"
+  env    = var.env
 }
