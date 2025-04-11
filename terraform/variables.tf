@@ -4,15 +4,17 @@ variable "env" {
 
 variable "account_id" {
   type = string
+  default = "255945442255"
 }
 
 variable "region" {
   type = string
+  default = "us-east-1"
 }
 
 variable "public_subnet_ids" {
   type = list(string)
-  default = [ "vpc-03da384fe18f03012" ]
+  default = [ "subnet-003548ecd64fababb" ]
 }
 
 variable "security_group_ids" {
