@@ -9,6 +9,11 @@ resource "aws_iam_role" "custom_task_role" {
       Action = "sts:AssumeRole"
     }]
   })
+
+  lifecycle {
+    create_before_destroy = true
+    ignore_changes        = [name,tags]
+  }
 }
 
 resource "aws_iam_policy" "task_custom_policy" {
@@ -25,6 +30,9 @@ resource "aws_iam_policy" "task_custom_policy" {
       Resource = "*"
     }]
   })
+  lifecycle {
+    create_before_destroy = true
+    ignore_changes        = [name]
 }
 
 resource "aws_iam_role_policy_attachment" "task_role_policy_attach" {
