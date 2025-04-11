@@ -17,7 +17,7 @@ resource "aws_iam_role" "custom_task_role" {
 }
 
 resource "aws_iam_policy" "task_custom_policy" {
-  name = "${var.env}-ecs-task-policy"
+  name = "${var.env}-ecs-task-policy-${random_id.suffix.hex}"
 
   policy = jsonencode({
     Version = "2012-10-17",
@@ -40,4 +40,8 @@ resource "aws_iam_policy" "task_custom_policy" {
 resource "aws_iam_role_policy_attachment" "task_role_policy_attach" {
   role       = aws_iam_role.custom_task_role.name
   policy_arn = aws_iam_policy.task_custom_policy.arn
+}
+
+resource "random_id" "suffix" {
+  byte_length = 4
 }
