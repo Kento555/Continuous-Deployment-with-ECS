@@ -9,6 +9,10 @@ data "aws_region" "current" {}
 resource "aws_ecr_repository" "ecr" {
   name         = "${var.env}-ecr"
   force_delete = true
+
+  lifecycle {
+    ignore_changes = [name]
+  }
 }
 
 module "iam_task_role" {
@@ -21,6 +25,8 @@ module "ecs" {
   version = "~> 5.9.0"
 
   cluster_name = "${local.prefix}-${var.env}-ecs"
+
+  create_cloudwatch_log_group = false
 
   fargate_capacity_providers = {
     FARGATE = {
