@@ -4,4 +4,4 @@ This project demonstrates CI/CD deployment to ECS using GitHub Actions and Terra
 
 
 update terraform resource completed 1
-update apps now. 22
+update apps now. 222
